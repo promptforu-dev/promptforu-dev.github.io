@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TikTok Authorization</title>
+  <style>
+    body {
+      background: #101114;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px 20px;
+    }
+    main {
+      max-width: 650px;
+      margin: auto;
+      background: #202127;
+      padding: 30px;
+      border-radius: 14px;
+    }
+    button {
+      padding: 13px 22px;
+      background: #ff4560;
+      color: white;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #result {
+      overflow-wrap: anywhere;
+      color: #b8bac3;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>TikTok Authorization</h1>
+    <p id="status">Checking authorization...</p>
+    <p id="result"></p>
+    <button id="copy" hidden>Copy Redirect URL</button>
+    <p>You can return to Telegram after copying the URL.</p>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const status = document.getElementById("status");
+    const result = document.getElementById("result");
+    const copy = document.getElementById("copy");
+
+    if (params.has("error")) {
+      status.textContent = "Authorization failed.";
+      result.textContent = params.get("error_description") || params.get("error");
+    } else if (params.has("code") && params.has("state")) {
+      status.textContent = "Authorization received successfully.";
+      result.textContent = "Return to Telegram and send the full URL to your bot using /tiktok_code.";
+      copy.hidden = false;
+      copy.onclick = async () => {
+        await navigator.clipboard.writeText(window.location.href);
+        copy.textContent = "Copied!";
+      };
+    } else {
+      status.textContent = "Waiting for TikTok authorization.";
+      result.textContent = "Please start the connection from your Telegram bot.";
+    }
+  </script>
+</body>
+</html>
+
